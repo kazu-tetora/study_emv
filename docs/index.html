@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EMV仕様書の学習・リファレンスサイト。Contact/Contactless規格の章ごとの概要、用語集、横断検索機能を提供。">
+  <title>EMV Study — 仕様書学習リファレンス</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💳</text></svg>">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="#" class="logo" onclick="switchTab('specs'); return false;">
+        <div class="logo-icon">💳</div>
+        <div>
+          <div class="logo-text">EMV Study</div>
+          <div class="logo-sub">Specification Reference</div>
+        </div>
+      </a>
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab active" data-tab="specs" role="tab" onclick="switchTab('specs')">
+          <span class="tab-icon">📖</span>仕様概要
+        </button>
+        <button class="nav-tab" data-tab="glossary" role="tab" onclick="switchTab('glossary')">
+          <span class="tab-icon">📝</span>用語集
+        </button>
+        <button class="nav-tab" data-tab="search" role="tab" onclick="switchTab('search')">
+          <span class="tab-icon">🔍</span>検索
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- Tab 1: Specifications Overview -->
+    <div id="tab-specs" class="tab-content active">
+      <div class="section-header">
+        <h1 class="section-title">仕様書概要</h1>
+        <p class="section-desc">EMV Contact (v4.4) および Contactless (v2.11) 仕様書の章ごとの概要と構成を一覧できます。各カードをクリックすると章の詳細が展開されます。</p>
+      </div>
+      <div id="specs-content"></div>
+    </div>
+
+    <!-- Tab 2: Glossary -->
+    <div id="tab-glossary" class="tab-content">
+      <div class="section-header">
+        <h1 class="section-title">用語集</h1>
+        <p class="section-desc">EMV仕様で使用される主要な用語・略語の一覧。定義、日本語名、関連する仕様書への参照を含みます。</p>
+      </div>
+      <div id="glossary-content"></div>
+    </div>
+
+    <!-- Tab 3: Search -->
+    <div id="tab-search" class="tab-content">
+      <div class="search-hero">
+        <h2>🔍 横断検索・逆引き</h2>
+        <p>キーワードを入力して、仕様書の章・用語を横断的に検索できます。「○○について知りたい」→ 該当する仕様書と章を特定。</p>
+        <div class="search-input-wrapper">
+          <span class="search-input-icon">🔍</span>
+          <input type="text" class="search-input" id="search-input" placeholder="キーワードを入力... (例: CVM, 暗号文, kernel)" autocomplete="off">
+        </div>
+        <div id="search-suggestions" class="suggestions"></div>
+      </div>
+      <div id="search-stats" class="search-stats"></div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>EMV Study — EMV仕様書学習リファレンス | Contact v4.4 / Contactless v2.11</p>
+    <p>This site is for study purposes. EMV® is a registered trademark of EMVCo, LLC.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="data/spec-data.js"></script>
+  <script src="data/glossary-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
