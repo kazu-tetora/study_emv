@@ -27,6 +27,9 @@
         <button class="nav-tab" data-tab="glossary" role="tab" onclick="switchTab('glossary')">
           <span class="tab-icon">📝</span>用語集
         </button>
+        <button class="nav-tab" data-tab="reference" role="tab" onclick="switchTab('reference')">
+          <span class="tab-icon">🔢</span>データ辞書
+        </button>
         <button class="nav-tab" data-tab="search" role="tab" onclick="switchTab('search')">
           <span class="tab-icon">🔍</span>検索
         </button>
@@ -55,7 +58,39 @@
       <div id="glossary-content"></div>
     </div>
 
-    <!-- Tab 3: Search -->
+    <!-- Tab 3: Reference (Commands and Tags) -->
+    <div id="tab-reference" class="tab-content">
+      <div class="section-header">
+        <h1 class="section-title">データ辞書 (Commands & Tags)</h1>
+        <p class="section-desc">EMV取引で使用される主要なAPDUコマンドとデータ要素（Tag）のリファレンスです。</p>
+      </div>
+      
+      <div class="reference-section">
+        <h2 class="sub-section-title">APDU コマンド</h2>
+        <div class="glossary-controls">
+          <div class="glossary-search-wrapper">
+            <span class="glossary-search-icon">🔍</span>
+            <input type="text" class="glossary-search" id="cmd-filter" 
+                   placeholder="コマンドをフィルタ..." oninput="filterReference()" autocomplete="off">
+          </div>
+        </div>
+        <div class="reference-grid" id="cmd-list"></div>
+      </div>
+
+      <div class="reference-section" style="margin-top: 48px;">
+        <h2 class="sub-section-title">データ要素 (Tags)</h2>
+        <div class="glossary-controls">
+          <div class="glossary-search-wrapper">
+            <span class="glossary-search-icon">🔍</span>
+            <input type="text" class="glossary-search" id="tag-filter" 
+                   placeholder="Tag(Hex)や名称をフィルタ..." oninput="filterReference()" autocomplete="off">
+          </div>
+        </div>
+        <div class="reference-grid" id="tag-list"></div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Search -->
     <div id="tab-search" class="tab-content">
       <div class="search-hero">
         <h2>🔍 横断検索・逆引き</h2>
@@ -105,6 +140,7 @@
   <!-- Scripts -->
   <script src="data/spec-data.js"></script>
   <script src="data/glossary-data.js"></script>
+  <script src="data/reference-data.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -5,11 +5,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   renderSpecsTab();
   renderGlossaryTab();
+  renderReferenceTab();
   initSearch();
 
   // Handle URL hash for direct tab navigation
   const hash = window.location.hash.replace('#', '');
-  if (['specs', 'glossary', 'search'].includes(hash)) {
+  if (['specs', 'glossary', 'reference', 'search'].includes(hash)) {
     switchTab(hash);
   }
 });
@@ -259,7 +260,90 @@ function applyGlossaryFilter() {
 }
 
 // ===================================================
-// Tab 3: Search
+// Tab 3: Reference (Commands & Tags)
+// ===================================================
+function renderReferenceTab() {
+  renderReferenceItems();
+}
+
+function renderReferenceItems(cmdFilterText = '', tagFilterText = '') {
+  const cmdList = document.getElementById('cmd-list');
+  const tagList = document.getElementById('tag-list');
+
+  // Filter commands
+  let cmds = CMD_DATA;
+  if (cmdFilterText) {
+    const q = cmdFilterText.toLowerCase();
+    cmds = cmds.filter(c => 
+      c.name.toLowerCase().includes(q) || 
+      c.cla.toLowerCase().includes(q) || 
+      c.ins.toLowerCase().includes(q) || 
+      c.description.toLowerCase().includes(q)
+    );
+  }
+
+  // Render commands
+  if (cmds.length === 0) {
+    cmdList.innerHTML = `<div class="search-empty"><p>該当するコマンドがありません</p></div>`;
+  } else {
+    cmdList.innerHTML = cmds.map(c => `
+      <div class="reference-item">
+        <div class="cmd-header">
+          <span class="cmd-name">${c.name}</span>
+          <span class="cmd-code">CLA: ${c.cla} | INS: ${c.ins}</span>
+          <span class="glossary-category-tag" style="background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.2); color: var(--accent-indigo); margin-left: auto;">
+            ${c.category}
+          </span>
+        </div>
+        <div class="reference-desc">${c.description}</div>
+        <div class="glossary-refs">
+          ${c.relatedSpecs.map(s => `<span class="ref-tag">📖 ${s}</span>`).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Filter tags
+  let tags = TAG_DATA;
+  if (tagFilterText) {
+    const q = tagFilterText.toLowerCase();
+    tags = tags.filter(t => 
+      t.tag.toLowerCase().includes(q) || 
+      t.name.toLowerCase().includes(q) || 
+      t.description.toLowerCase().includes(q)
+    );
+  }
+
+  // Render tags
+  if (tags.length === 0) {
+    tagList.innerHTML = `<div class="search-empty"><p>該当するタグがありません</p></div>`;
+  } else {
+    tagList.innerHTML = tags.map(t => `
+      <div class="reference-item">
+        <div class="tag-header">
+          <span class="tag-hex">${t.tag}</span>
+          <span class="tag-name">${t.name}</span>
+          <span class="glossary-category-tag" style="background: rgba(52, 211, 153, 0.1); border-color: rgba(52, 211, 153, 0.2); color: var(--accent-emerald); margin-left: auto;">
+            ${t.source}
+          </span>
+        </div>
+        <div class="tag-meta">
+          <span>Format: ${t.format}</span> | <span>Length: ${t.length}</span>
+        </div>
+        <div class="reference-desc">${t.description}</div>
+      </div>
+    `).join('');
+  }
+}
+
+function filterReference() {
+  const cmdText = document.getElementById('cmd-filter').value;
+  const tagText = document.getElementById('tag-filter').value;
+  renderReferenceItems(cmdText, tagText);
+}
+
+// ===================================================
+// Tab 4: Search
 // ===================================================
 function initSearch() {
   const input = document.getElementById('search-input');
@@ -297,7 +381,7 @@ function performSearch(query) {
   }
 
   const q = query.toLowerCase().trim();
-  const results = { specs: [], glossary: [] };
+  const results = { specs: [], glossary: [], commands: [], tags: [] };
 
   // Search in spec chapters
   for (const [catKey, category] of Object.entries(SPEC_DATA)) {
@@ -346,9 +430,27 @@ function performSearch(query) {
     }
   }
 
+  // Search in commands
+  for (const c of CMD_DATA) {
+    const score = calcRelevance(q, [
+      c.name, c.cla, c.ins, c.description, ...c.relatedSpecs
+    ]);
+    if (score > 0) results.commands.push({ score, ...c });
+  }
+
+  // Search in tags
+  for (const t of TAG_DATA) {
+    const score = calcRelevance(q, [
+      t.tag, t.name, t.description, t.format, t.source
+    ]);
+    if (score > 0) results.tags.push({ score, ...t });
+  }
+
   // Sort by relevance
   results.specs.sort((a, b) => b.score - a.score);
   results.glossary.sort((a, b) => b.score - a.score);
+  results.commands.sort((a, b) => b.score - a.score);
+  results.tags.sort((a, b) => b.score - a.score);
 
   renderSearchResults(results, q);
 }
@@ -436,6 +538,44 @@ function renderSearchResults(results, query) {
     html += `</div>`;
   }
 
+  // Command results
+  if (results.commands.length > 0) {
+    html += `<div class="search-result-group">
+      <div class="search-result-group-title">⚙️ APDU コマンド (${results.commands.length}件)</div>`;
+
+    for (const c of results.commands.slice(0, 10)) {
+      html += `
+        <div class="search-result-item" onclick="navigateToReference('cmd', '${c.name}')">
+          <div class="search-result-title">
+            ${highlightText(c.name, query)}
+            <span style="font-family: monospace; font-size: 11px; margin-left: 8px; color: var(--accent-cyan);">CLA:${highlightText(c.cla, query)} INS:${highlightText(c.ins, query)}</span>
+          </div>
+          <div class="search-result-summary">${highlightText(c.description, query)}</div>
+        </div>
+      `;
+    }
+    html += `</div>`;
+  }
+
+  // Tag results
+  if (results.tags.length > 0) {
+    html += `<div class="search-result-group">
+      <div class="search-result-group-title">🏷️ データ要素・タグ (${results.tags.length}件)</div>`;
+
+    for (const t of results.tags.slice(0, 15)) {
+      html += `
+        <div class="search-result-item" onclick="navigateToReference('tag', '${t.tag}')">
+          <div class="search-result-title">
+            <span style="font-family: monospace; color: var(--accent-amber); margin-right: 8px;">${highlightText(t.tag, query)}</span>
+            ${highlightText(t.name, query)}
+          </div>
+          <div class="search-result-summary">${highlightText(t.description, query)}</div>
+        </div>
+      `;
+    }
+    html += `</div>`;
+  }
+
   container.innerHTML = html;
 }
 
@@ -471,6 +611,27 @@ function navigateToGlossary(term) {
     if (filterInput) {
       filterInput.value = term;
       filterGlossary();
+    }
+  }, 100);
+}
+
+function navigateToReference(type, term) {
+  switchTab('reference');
+  setTimeout(() => {
+    if (type === 'cmd') {
+      const input = document.getElementById('cmd-filter');
+      if (input) {
+        input.value = term;
+        filterReference();
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    } else if (type === 'tag') {
+      const input = document.getElementById('tag-filter');
+      if (input) {
+        input.value = term;
+        filterReference();
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
   }, 100);
 }
