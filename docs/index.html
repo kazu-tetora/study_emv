@@ -72,6 +72,30 @@
 
   </main>
 
+  <!-- PDF Viewer Modal -->
+  <div id="pdf-modal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title" id="pdf-modal-title">Spec Document</h2>
+        <div class="modal-actions">
+          <a id="pdf-modal-download" class="modal-btn" href="#" target="_blank" download title="Download PDF">
+            <span>📥</span> Download
+          </a>
+          <a id="pdf-modal-newtab" class="modal-btn" href="#" target="_blank" title="Open in new tab">
+            <span>↗️</span> New Tab
+          </a>
+          <button class="modal-btn close-btn" onclick="closePdfModal()" aria-label="Close modal">
+            <span>✖</span> Close
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="pdf-loader" id="pdf-loader">Loading document...</div>
+        <iframe id="pdf-iframe" class="pdf-iframe" title="PDF Viewer" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="footer">
     <p>EMV Study — EMV仕様書学習リファレンス | Contact v4.4 / Contactless v2.11</p>

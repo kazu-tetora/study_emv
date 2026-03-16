@@ -75,7 +75,7 @@ function renderSpecsTab() {
           </div>
           <div class="chapters-container">
             <div class="chapters-list">
-              ${renderChapters(book.chapters)}
+              ${renderChapters(book.chapters, { ...book, category: catKey })}
             </div>
           </div>
         </div>
@@ -88,12 +88,12 @@ function renderSpecsTab() {
   container.innerHTML = html;
 }
 
-function renderChapters(chapters) {
+function renderChapters(chapters, book) {
   return chapters.map(ch => `
-    <div class="chapter-item">
-      <div class="chapter-number">${ch.number}</div>
+    <div class="chapter-item" style="cursor: pointer;" onclick="openPdfModal('${book.category}', '${book.filename}', ${ch.page}, '${book.title} - Chapter ${ch.number}')">
+      <div class="chapter-number" title="Open PDF at page ${ch.page}">${ch.number}</div>
       <div class="chapter-content">
-        <div class="chapter-title">${ch.title}</div>
+        <div class="chapter-title">${ch.title} <span style="font-size:11px; color:var(--text-muted);">[p.${ch.page}]</span></div>
         <div class="chapter-summary">${ch.summary}</div>
         <div class="chapter-keywords">
           ${ch.keywords.map(kw => `<span class="keyword-tag">${kw}</span>`).join('')}
@@ -314,6 +314,8 @@ function performSearch(query) {
           results.specs.push({
             score,
             category: catKey,
+            filename: book.filename,
+            page: chapter.page,
             bookTitle: book.title,
             bookId: book.id,
             chapterNumber: chapter.number,
@@ -402,8 +404,8 @@ function renderSearchResults(results, query) {
     for (const r of results.specs.slice(0, 30)) {
       const catIcon = r.category === 'contact' ? '🔌' : '📡';
       html += `
-        <div class="search-result-item" onclick="navigateToSpec('${r.bookId}')">
-          <div class="search-result-title">${highlightText(r.chapterTitle, query)}</div>
+        <div class="search-result-item" onclick="openPdfModal('${r.category}', '${r.filename}', ${r.page}, '${r.bookTitle} - Chapter ${r.chapterNumber}')">
+          <div class="search-result-title">${highlightText(r.chapterTitle, query)} <span style="font-size:11px; color:var(--text-muted);">[p.${r.page}]</span></div>
           <div class="search-result-spec">${catIcon} ${r.bookTitle} — Chapter ${r.chapterNumber}</div>
           <div class="search-result-summary">${highlightText(r.summary, query)}</div>
         </div>
@@ -472,3 +474,55 @@ function navigateToGlossary(term) {
     }
   }, 100);
 }
+
+// ===================================================
+// PDF Modal Viewer
+// ===================================================
+function openPdfModal(category, filename, page, title) {
+  const modal = document.getElementById('pdf-modal');
+  const iframe = document.getElementById('pdf-iframe');
+  const titleEl = document.getElementById('pdf-modal-title');
+  const downloadBtn = document.getElementById('pdf-modal-download');
+  const newtabBtn = document.getElementById('pdf-modal-newtab');
+  
+  // Construct URL
+  const pdfUrl = `spec/${category}/${filename}`;
+  const fullUrl = `${pdfUrl}#page=${page}&view=FitH`;
+  
+  // Update UI
+  titleEl.textContent = title;
+  downloadBtn.href = pdfUrl;
+  newtabBtn.href = fullUrl;
+  
+  // Show modal
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  
+  // Load PDF
+  iframe.classList.remove('loaded');
+  iframe.onload = () => iframe.classList.add('loaded');
+  iframe.src = fullUrl;
+}
+
+function closePdfModal() {
+  const modal = document.getElementById('pdf-modal');
+  const iframe = document.getElementById('pdf-iframe');
+  
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+  
+  // Clear src after transition to stop memory leaks
+  setTimeout(() => {
+    iframe.src = 'about:blank';
+    iframe.classList.remove('loaded');
+  }, 300);
+}
+
+// Close modal on escape key or outside click
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePdfModal();
+});
+
+document.getElementById('pdf-modal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'pdf-modal') closePdfModal();
+});
