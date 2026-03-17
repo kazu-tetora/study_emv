@@ -30,6 +30,9 @@
         <button class="nav-tab" data-tab="reference" role="tab" onclick="switchTab('reference')">
           <span class="tab-icon">🔢</span>データ辞書
         </button>
+        <button class="nav-tab" data-tab="sequence" role="tab" onclick="switchTab('sequence')">
+          <span class="tab-icon">🔄</span>シーケンス
+        </button>
         <button class="nav-tab" data-tab="search" role="tab" onclick="switchTab('search')">
           <span class="tab-icon">🔍</span>検索
         </button>
@@ -90,7 +93,19 @@
       </div>
     </div>
 
-    <!-- Tab 4: Search -->
+    <!-- Tab 4: Sequence Diagrams -->
+    <div id="tab-sequence" class="tab-content">
+      <div class="section-header">
+        <h1 class="section-title">シーケンス図 (Sequence Diagrams)</h1>
+        <p class="section-desc">接触/非接触EMVの標準的なカード通信フロー（トランザクションシーケンス）の概要です。</p>
+      </div>
+
+      <div id="sequence-list">
+        <!-- Sequence diagrams will be rendered here -->
+      </div>
+    </div>
+
+    <!-- Tab 5: Search -->
     <div id="tab-search" class="tab-content">
       <div class="search-hero">
         <h2>🔍 横断検索・逆引き</h2>
@@ -138,9 +153,18 @@
   </footer>
 
   <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      sequence: { showSequenceNumbers: true, actorMargin: 50, noteMargin: 10 }
+    });
+  </script>
   <script src="data/spec-data.js"></script>
   <script src="data/glossary-data.js"></script>
   <script src="data/reference-data.js"></script>
+  <script src="data/sequence-data.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

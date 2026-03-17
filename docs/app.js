@@ -6,11 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSpecsTab();
   renderGlossaryTab();
   renderReferenceTab();
+  renderSequenceTab();
   initSearch();
 
   // Handle URL hash for direct tab navigation
   const hash = window.location.hash.replace('#', '');
-  if (['specs', 'glossary', 'reference', 'search'].includes(hash)) {
+  if (['specs', 'glossary', 'reference', 'sequence', 'search'].includes(hash)) {
     switchTab(hash);
   }
 });
@@ -343,7 +344,76 @@ function filterReference() {
 }
 
 // ===================================================
-// Tab 4: Search
+// Tab 4: Sequence Diagrams
+// ===================================================
+function renderSequenceTab() {
+  const container = document.getElementById('sequence-list');
+  let html = '';
+
+  for (const seq of SEQUENCE_DATA) {
+    const catClass = seq.category === 'contact' ? 'contact' : 'contactless';
+    const catLabel = seq.category === 'contact' ? '🔌 Contact' : '📡 Contactless';
+    
+    let stepsHtml = '';
+    seq.steps.forEach((step, idx) => {
+      stepsHtml += `
+        <div class="sequence-step-item">
+          <div class="step-number">${idx + 1}.</div>
+          <div class="step-desc"><strong>${step.step}:</strong> ${step.description}</div>
+        </div>
+      `;
+    });
+
+    html += `
+      <div class="sequence-card" id="seq-${seq.id}">
+        <div class="sequence-header">
+          <div class="sequence-title">
+            ${seq.title}
+            <span class="category-badge ${catClass}">${catLabel}</span>
+          </div>
+          <div class="sequence-desc">${seq.description}</div>
+        </div>
+        
+        <div class="sequence-diagram">
+          <pre class="mermaid">${seq.mermaid}</pre>
+        </div>
+        
+        <div class="sequence-steps">
+          <h3 class="sequence-steps-title">ステップ解説</h3>
+          <div class="sequence-steps-list">
+            ${stepsHtml}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  container.innerHTML = html;
+}
+
+// Ensure Mermaid processes dynamically added diagrams when tab switches
+function processMermaidDiagrams() {
+  if (window.mermaid) {
+    try {
+      mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+    } catch (e) {
+      console.error("Mermaid parsing failed", e);
+    }
+  }
+}
+
+// Optional intercept for switchTab to hook into visibility
+const originalSwitchTab = switchTab;
+switchTab = function(tabId) {
+  originalSwitchTab(tabId);
+  if (tabId === 'sequence') {
+    // Adding slight delay to allow display:block before rendering SVG
+    setTimeout(processMermaidDiagrams, 50);
+  }
+};
+
+// ===================================================
+// Tab 5: Search
 // ===================================================
 function initSearch() {
   const input = document.getElementById('search-input');
@@ -381,7 +451,7 @@ function performSearch(query) {
   }
 
   const q = query.toLowerCase().trim();
-  const results = { specs: [], glossary: [], commands: [], tags: [] };
+  const results = { specs: [], glossary: [], commands: [], tags: [], sequences: [] };
 
   // Search in spec chapters
   for (const [catKey, category] of Object.entries(SPEC_DATA)) {
@@ -446,11 +516,21 @@ function performSearch(query) {
     if (score > 0) results.tags.push({ score, ...t });
   }
 
+  // Search in sequences
+  for (const s of SEQUENCE_DATA) {
+    const stepTexts = s.steps.map(step => step.step + " " + step.description);
+    const score = calcRelevance(q, [
+      s.title, s.description, s.mermaid, ...stepTexts
+    ]);
+    if (score > 0) results.sequences.push({ score, ...s });
+  }
+
   // Sort by relevance
   results.specs.sort((a, b) => b.score - a.score);
   results.glossary.sort((a, b) => b.score - a.score);
   results.commands.sort((a, b) => b.score - a.score);
   results.tags.sort((a, b) => b.score - a.score);
+  results.sequences.sort((a, b) => b.score - a.score);
 
   renderSearchResults(results, q);
 }
@@ -576,6 +656,24 @@ function renderSearchResults(results, query) {
     html += `</div>`;
   }
 
+  // Sequence results
+  if (results.sequences.length > 0) {
+    html += `<div class="search-result-group">
+      <div class="search-result-group-title">🔄 シーケンス・通信フロー (${results.sequences.length}件)</div>`;
+
+    for (const s of results.sequences.slice(0, 5)) {
+      const catIcon = s.category === 'contact' ? '🔌' : '📡';
+      html += `
+        <div class="search-result-item" onclick="navigateToSequence('${s.id}')">
+          <div class="search-result-title">${highlightText(s.title, query)}</div>
+          <div class="search-result-spec">${catIcon} ${s.category === 'contact' ? 'Contact' : 'Contactless'} Transaction Flow</div>
+          <div class="search-result-summary">${highlightText(s.description, query)}</div>
+        </div>
+      `;
+    }
+    html += `</div>`;
+  }
+
   container.innerHTML = html;
 }
 
@@ -632,6 +730,22 @@ function navigateToReference(type, term) {
         filterReference();
         input.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
+    }
+  }, 100);
+}
+
+function navigateToSequence(id) {
+  switchTab('sequence');
+  setTimeout(() => {
+    const el = document.getElementById(`seq-${id}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.style.border = '1px solid var(--accent-indigo)';
+      el.style.boxShadow = 'var(--shadow-glow)';
+      setTimeout(() => {
+        el.style.border = '';
+        el.style.boxShadow = '';
+      }, 2000);
     }
   }, 100);
 }
