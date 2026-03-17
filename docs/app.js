@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderReferenceTab();
   renderSequenceTab();
   initSearch();
+  initTheme();
 
   // Handle URL hash for direct tab navigation
   const hash = window.location.hash.replace('#', '');
@@ -36,6 +37,49 @@ function switchTab(tabId) {
   // Focus search input when switching to search
   if (tabId === 'search') {
     setTimeout(() => document.getElementById('search-input')?.focus(), 100);
+  }
+}
+
+// ===================================================
+// Theme Toggle
+// ===================================================
+function initTheme() {
+  const toggleBtn = document.getElementById('theme-toggle');
+  
+  // Check local storage or system preference
+  const savedTheme = localStorage.getItem('emv-study-theme');
+  const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+  
+  const currentTheme = savedTheme || (prefersLight ? 'light' : 'dark');
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  
+  toggleBtn.addEventListener('click', () => {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    const newTheme = isLight ? 'dark' : 'light';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('emv-study-theme', newTheme);
+    
+    // Re-render Mermaid diagrams if on sequence tab
+    reinitializeMermaid(newTheme);
+  });
+}
+
+function reinitializeMermaid(theme) {
+  if (window.mermaid) {
+    const mermaidTheme = theme === 'light' ? 'default' : 'dark';
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: mermaidTheme,
+      sequence: { showSequenceNumbers: true, actorMargin: 50, noteMargin: 10 }
+    });
+    
+    const activeTab = document.querySelector('.tab-content.active');
+    if (activeTab && activeTab.id === 'tab-sequence') {
+      // Need to clear and re-render the HTML to force Mermaid to redraw SVG
+      renderSequenceTab();
+      setTimeout(processMermaidDiagrams, 50);
+    }
   }
 }
 

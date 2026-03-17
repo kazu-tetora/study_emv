@@ -20,23 +20,29 @@
           <div class="logo-sub">Specification Reference</div>
         </div>
       </a>
-      <nav class="nav-tabs" role="tablist">
-        <button class="nav-tab active" data-tab="specs" role="tab" onclick="switchTab('specs')">
-          <span class="tab-icon">📖</span>仕様概要
+      <div class="header-right">
+        <nav class="nav-tabs" role="tablist">
+          <button class="nav-tab active" data-tab="specs" role="tab" onclick="switchTab('specs')">
+            <span class="tab-icon">📖</span>仕様概要
+          </button>
+          <button class="nav-tab" data-tab="glossary" role="tab" onclick="switchTab('glossary')">
+            <span class="tab-icon">📝</span>用語集
+          </button>
+          <button class="nav-tab" data-tab="reference" role="tab" onclick="switchTab('reference')">
+            <span class="tab-icon">🔢</span>データ辞書
+          </button>
+          <button class="nav-tab" data-tab="sequence" role="tab" onclick="switchTab('sequence')">
+            <span class="tab-icon">🔄</span>シーケンス
+          </button>
+          <button class="nav-tab" data-tab="search" role="tab" onclick="switchTab('search')">
+            <span class="tab-icon">🔍</span>検索
+          </button>
+        </nav>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
+          <span class="icon-dark">🌙</span>
+          <span class="icon-light">☀️</span>
         </button>
-        <button class="nav-tab" data-tab="glossary" role="tab" onclick="switchTab('glossary')">
-          <span class="tab-icon">📝</span>用語集
-        </button>
-        <button class="nav-tab" data-tab="reference" role="tab" onclick="switchTab('reference')">
-          <span class="tab-icon">🔢</span>データ辞書
-        </button>
-        <button class="nav-tab" data-tab="sequence" role="tab" onclick="switchTab('sequence')">
-          <span class="tab-icon">🔄</span>シーケンス
-        </button>
-        <button class="nav-tab" data-tab="search" role="tab" onclick="switchTab('search')">
-          <span class="tab-icon">🔍</span>検索
-        </button>
-      </nav>
+      </div>
     </div>
   </header>
 

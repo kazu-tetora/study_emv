@@ -46,6 +46,68 @@
   --transition-slow: 0.5s ease;
 }
 
+/* --- Light Theme Variables --- */
+[data-theme='light'] {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-card-hover: rgba(241, 245, 249, 0.9);
+  --bg-glass: rgba(0, 0, 0, 0.02);
+  --bg-glass-hover: rgba(0, 0, 0, 0.05);
+  --border-glass: rgba(0, 0, 0, 0.08);
+  --border-glow: rgba(99, 102, 241, 0.4);
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-accent: #4f46e5; /* darker indigo */
+
+  --gradient-surface: linear-gradient(180deg, rgba(99, 102, 241, 0.04), transparent);
+  --gradient-card: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.02));
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.2);
+}
+
+/* --- Light Mode Specific Adjustments --- */
+[data-theme='light'] body::before {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(34, 211, 238, 0.03) 0%, transparent 50%);
+}
+
+[data-theme='light'] .header {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme='light'] .nav-tabs {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme='light'] .nav-tab:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='light'] .chapter-number {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+[data-theme='light'] .sequence-diagram {
+  background: rgba(248, 250, 252, 0.8);
+  border: 1px solid var(--border-glass);
+}
+
+[data-theme='light'] .sequence-step-item {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme='light'] .sequence-step-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
 /* --- Reset & Base --- */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -103,6 +165,44 @@ body::before {
   justify-content: space-between;
   gap: 24px;
 }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* --- Theme Toggle --- */
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 18px;
+  transition: all var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  color: var(--text-primary);
+  background: var(--bg-glass-hover);
+  border-color: var(--border-glow);
+}
+
+[data-theme="light"] .theme-toggle .icon-dark { display: none; }
+[data-theme="light"] .theme-toggle .icon-light { display: block; }
+
+[data-theme="dark"] .theme-toggle .icon-dark { display: block; }
+[data-theme="dark"] .theme-toggle .icon-light { display: none; }
+
+/* Default state before JS kicks in (assuming dark is default) */
+.theme-toggle .icon-dark { display: block; }
+.theme-toggle .icon-light { display: none; }
 
 .logo {
   display: flex;
