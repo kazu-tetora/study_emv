@@ -964,3 +964,58 @@ function endQuiz() {
   else if (ratio >= 0.5) msgEl.textContent = '順調に学習が進んでいます。👍';
   else msgEl.textContent = 'まだまだこれから。リファレンスを見直して再挑戦しよう！💪';
 }
+
+// ===================================================
+// Tab Learning: EMV Flashcards Logic
+// ===================================================
+let fcState = {
+  cards: [],
+  currentIndex: 0
+};
+
+function startFlashcards() {
+  document.getElementById('quiz-start-screen').classList.remove('active');
+  document.getElementById('flashcard-screen').classList.add('active');
+  
+  if (!TAG_DATA || TAG_DATA.length === 0) return;
+  
+  fcState.cards = [...TAG_DATA].sort(() => 0.5 - Math.random());
+  fcState.currentIndex = 0;
+  
+  document.getElementById('fc-total').textContent = fcState.cards.length;
+  renderFlashcard();
+}
+
+function renderFlashcard() {
+  const card = fcState.cards[fcState.currentIndex];
+  document.getElementById('fc-current').textContent = fcState.currentIndex + 1;
+  document.getElementById('fc-tag-hex').textContent = card.tag;
+  document.getElementById('fc-tag-hex-back').textContent = card.tag;
+  document.getElementById('fc-name').textContent = card.name;
+  document.getElementById('fc-desc').textContent = card.description;
+  
+  document.getElementById('flashcard-inner').classList.remove('is-flipped');
+}
+
+function flipFlashcard() {
+  document.getElementById('flashcard-inner').classList.toggle('is-flipped');
+}
+
+function nextFlashcard() {
+  if (fcState.currentIndex < fcState.cards.length - 1) {
+    fcState.currentIndex++;
+    renderFlashcard();
+  }
+}
+
+function prevFlashcard() {
+  if (fcState.currentIndex > 0) {
+    fcState.currentIndex--;
+    renderFlashcard();
+  }
+}
+
+function exitFlashcards() {
+  document.getElementById('flashcard-screen').classList.remove('active');
+  document.getElementById('quiz-start-screen').classList.add('active');
+}
