@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Handle URL hash for direct tab navigation
   const hash = window.location.hash.replace('#', '');
-  if (['specs', 'glossary', 'reference', 'sequence', 'search'].includes(hash)) {
+  if (['specs', 'glossary', 'reference', 'sequence', 'search', 'quiz'].includes(hash)) {
     switchTab(hash);
   }
 });
