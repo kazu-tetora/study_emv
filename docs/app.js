@@ -865,9 +865,9 @@ function startQuiz() {
     return;
   }
   
-  // Generate 10 random questions
+  // Generate questions for all available tags
   const shuffledTags = [...TAG_DATA].sort(() => 0.5 - Math.random());
-  quizState.questions = shuffledTags.slice(0, 10).map(correctTag => {
+  quizState.questions = shuffledTags.map(correctTag => {
     // Pick 3 random incorrect tags
     const others = TAG_DATA.filter(t => t.tag !== correctTag.tag).sort(() => 0.5 - Math.random());
     const choices = [correctTag, others[0], others[1], others[2]].sort(() => 0.5 - Math.random());
@@ -879,6 +879,9 @@ function startQuiz() {
   
   quizState.currentIndex = 0;
   quizState.score = 0;
+  
+  document.getElementById('quiz-total-q').textContent = quizState.questions.length;
+  document.getElementById('quiz-total-final').textContent = quizState.questions.length;
   
   updateQuizScore();
   renderQuizQuestion();
@@ -953,8 +956,11 @@ function endQuiz() {
   document.getElementById('quiz-final-score-val').textContent = quizState.score;
   const msgEl = document.getElementById('quiz-result-message');
   
-  if (quizState.score === 10) msgEl.textContent = '完璧です！あなたはEMVタグマスター！🎉';
-  else if (quizState.score >= 7) msgEl.textContent = '素晴らしい成績です！あともう少し！👏';
-  else if (quizState.score >= 4) msgEl.textContent = '順調に学習が進んでいます。👍';
+  const total = quizState.questions.length;
+  const ratio = quizState.score / total;
+  
+  if (ratio === 1) msgEl.textContent = '完璧です！あなたはEMVタグマスター！🎉';
+  else if (ratio >= 0.8) msgEl.textContent = '素晴らしい成績です！あともう少し！👏';
+  else if (ratio >= 0.5) msgEl.textContent = '順調に学習が進んでいます。👍';
   else msgEl.textContent = 'まだまだこれから。リファレンスを見直して再挑戦しよう！💪';
 }

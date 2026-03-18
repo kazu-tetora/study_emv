@@ -118,7 +118,7 @@
     <div id="tab-quiz" class="tab-content">
       <div class="section-header">
         <h1 class="section-title">タグクイズ (Tag Quiz)</h1>
-        <p class="section-desc">EMVタグの意味や用途から、正しいタグ（Hex値）を当てるクイズです。全10問。</p>
+        <p class="section-desc">EMVタグの意味や用途から、正しいタグ（Hex値）を当てるクイズです。全問正解を目指しましょう！</p>
       </div>
 
       <div class="quiz-container" id="quiz-container">
@@ -133,7 +133,7 @@
         <!-- Active Quiz Screen -->
         <div id="quiz-active-screen" class="quiz-screen">
           <div class="quiz-progress">
-            <span>問題 <span id="quiz-current-q">1</span>/10</span>
+            <span>問題 <span id="quiz-current-q">1</span> / <span id="quiz-total-q">--</span></span>
             <span>スコア: <span id="quiz-score">0</span></span>
           </div>
           <div class="quiz-question-box">
@@ -152,7 +152,7 @@
           <div class="quiz-hero-icon" id="quiz-result-icon">🏆</div>
           <h3 id="quiz-result-title">クイズ終了！</h3>
           <div class="quiz-final-score">
-            スコア: <span id="quiz-final-score-val">0</span> / 10
+            スコア: <span id="quiz-final-score-val">0</span> / <span id="quiz-total-final">--</span>
           </div>
           <p id="quiz-result-message" class="quiz-result-message">素晴らしい！</p>
           <button class="quiz-action-btn" onclick="startQuiz()">もう一度挑戦する</button>
