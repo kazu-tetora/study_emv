@@ -845,3 +845,116 @@ document.addEventListener('keydown', (e) => {
 document.getElementById('pdf-modal')?.addEventListener('click', (e) => {
   if (e.target.id === 'pdf-modal') closePdfModal();
 });
+
+// ===================================================
+// Tab Quiz: EMV Tag Quiz Logic
+// ===================================================
+let quizState = {
+  questions: [],
+  currentIndex: 0,
+  score: 0
+};
+
+function startQuiz() {
+  document.getElementById('quiz-start-screen').classList.remove('active');
+  document.getElementById('quiz-result-screen').classList.remove('active');
+  document.getElementById('quiz-active-screen').classList.add('active');
+  
+  if (!TAG_DATA || TAG_DATA.length < 4) {
+    alert("タグデータが不足しています。");
+    return;
+  }
+  
+  // Generate 10 random questions
+  const shuffledTags = [...TAG_DATA].sort(() => 0.5 - Math.random());
+  quizState.questions = shuffledTags.slice(0, 10).map(correctTag => {
+    // Pick 3 random incorrect tags
+    const others = TAG_DATA.filter(t => t.tag !== correctTag.tag).sort(() => 0.5 - Math.random());
+    const choices = [correctTag, others[0], others[1], others[2]].sort(() => 0.5 - Math.random());
+    return {
+      correct: correctTag,
+      choices: choices
+    };
+  });
+  
+  quizState.currentIndex = 0;
+  quizState.score = 0;
+  
+  updateQuizScore();
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const q = quizState.questions[quizState.currentIndex];
+  
+  document.getElementById('quiz-current-q').textContent = quizState.currentIndex + 1;
+  document.getElementById('quiz-question-text').textContent = q.correct.description;
+  
+  const optionsContainer = document.getElementById('quiz-options');
+  optionsContainer.innerHTML = '';
+  
+  q.choices.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-btn';
+    btn.innerHTML = `<span class="quiz-btn-tag">${choice.tag}</span> <span class="quiz-btn-name">${choice.name}</span>`;
+    btn.onclick = () => handleQuizAnswer(btn, choice.tag === q.correct.tag);
+    optionsContainer.appendChild(btn);
+  });
+  
+  const feedback = document.getElementById('quiz-feedback');
+  feedback.className = 'quiz-feedback';
+  feedback.innerHTML = '';
+  
+  document.getElementById('quiz-next-btn').style.display = 'none';
+}
+
+function handleQuizAnswer(selectedBtn, isCorrect) {
+  const buttons = document.querySelectorAll('.quiz-btn');
+  buttons.forEach(btn => {
+    btn.disabled = true;
+    const q = quizState.questions[quizState.currentIndex];
+    if (btn.querySelector('.quiz-btn-tag').textContent === q.correct.tag) {
+      btn.classList.add('correct');
+    }
+  });
+  
+  const feedback = document.getElementById('quiz-feedback');
+  if (isCorrect) {
+    quizState.score++;
+    selectedBtn.classList.add('correct');
+    feedback.innerHTML = '<div class="feedback-correct">✅ 正解！</div>';
+  } else {
+    selectedBtn.classList.add('incorrect');
+    feedback.innerHTML = '<div class="feedback-incorrect">❌ 不正解...</div>';
+  }
+  
+  updateQuizScore();
+  document.getElementById('quiz-next-btn').style.display = 'inline-flex';
+}
+
+function nextQuizQuestion() {
+  quizState.currentIndex++;
+  if (quizState.currentIndex >= quizState.questions.length) {
+    endQuiz();
+  } else {
+    renderQuizQuestion();
+  }
+}
+
+function updateQuizScore() {
+  document.getElementById('quiz-score').textContent = quizState.score;
+}
+
+function endQuiz() {
+  document.getElementById('quiz-active-screen').classList.remove('active');
+  const resultScreen = document.getElementById('quiz-result-screen');
+  resultScreen.classList.add('active');
+  
+  document.getElementById('quiz-final-score-val').textContent = quizState.score;
+  const msgEl = document.getElementById('quiz-result-message');
+  
+  if (quizState.score === 10) msgEl.textContent = '完璧です！あなたはEMVタグマスター！🎉';
+  else if (quizState.score >= 7) msgEl.textContent = '素晴らしい成績です！あともう少し！👏';
+  else if (quizState.score >= 4) msgEl.textContent = '順調に学習が進んでいます。👍';
+  else msgEl.textContent = 'まだまだこれから。リファレンスを見直して再挑戦しよう！💪';
+}
