@@ -77,6 +77,22 @@ const SPEC_DATA = {
           { number: "12", title: "Acquirer Interface", page: 90, summary: "アクワイアラとのインターフェース。オーソリゼーション要求/応答、金融取引要求/応答/確認、バッチデータキャプチャ、精算、オンラインアドバイス、リバーサルのメッセージ内容と例外処理。", keywords: ["acquirer", "authorization", "financial transaction", "batch", "reconciliation", "advice", "reversal", "online"] },
           { number: "Annex A", title: "Coding of Terminal Data Elements", page: 109, summary: "ターミナルデータ要素のコーディング。Terminal Type、Terminal Capabilities、Additional Terminal Capabilities、CVM Results、Issuer Script Results等のビットレベル定義。", keywords: ["terminal type", "terminal capabilities", "CVM results", "ARC", "coding"] }
         ]
+      },
+      {
+        id: "book_l1_contact",
+        title: "EMV Level 1 Contact Interface Specification",
+        filename: "EMV-Level-1-Contact-Interface-Specification-V1.0-221012.pdf",
+        pages: null,
+        description: "ターミナルとICC（ICカード）間の物理的特性、電気的特性、および初期通信プロトコルを規定するLevel 1（物理層・論理層レベル）の仕様。",
+        chapters: [
+          { number: "1", title: "Introduction", page: 1, summary: "Level 1接触インターフェース仕様の目的と適用範囲、読者対象を定義。", keywords: ["introduction", "scope", "level 1"] },
+          { number: "2", title: "Normative References", page: 1, summary: "準拠する規格（ISO/IEC 7816シリーズ等）への参照。", keywords: ["ISO 7816", "reference"] },
+          { number: "3", title: "Definitions and Abbreviations", page: 1, summary: "仕様書で使用される用語と略語の定義。", keywords: ["definitions", "abbreviations"] },
+          { number: "4", title: "Physical Characteristics", page: 1, summary: "カードとターミナルの物理的なインターフェース特性、接点の配置と寸法などを定義。", keywords: ["physical", "contacts", "dimension", "mechanical"] },
+          { number: "5", title: "Electrical Characteristics", page: 1, summary: "電源（VCC）、クロック信号（CLK）、リセット信号（RST）、データI/Oの電気的仕様。", keywords: ["electrical", "VCC", "clock", "RST", "I/O", "voltage"] },
+          { number: "6", title: "Logical Interface", page: 1, summary: "ICCの活性化、ATR（Answer to Reset）の受信・解析、プロトコルの選択（T=0、T=1）およびデアクティベーションフロー。", keywords: ["logical interface", "ATR", "activation", "protocol selection", "T=0", "T=1"] },
+          { number: "7", title: "Terminal Transport Layer", page: 1, summary: "各伝送プロトコル（T=0, T=1）に関するトランスポート層でのデータ送信・受信メカニズム仕様。", keywords: ["transport layer", "T=0", "T=1", "transmission"] }
+        ]
       }
     ]
   },
@@ -187,6 +203,22 @@ const SPEC_DATA = {
           { number: "1", title: "Introduction", page: 8, summary: "Kernel 7の目的と適用範囲。追加ブランドの非接触決済対応。", keywords: ["introduction", "additional brand", "contactless"] },
           { number: "2", title: "Architecture", page: 12, summary: "Kernel 7のアーキテクチャと処理モデル。", keywords: ["architecture", "processing model"] },
           { number: "3", title: "Transaction Processing", page: 25, summary: "トランザクション処理の詳細。", keywords: ["transaction processing"] }
+        ]
+      },
+      {
+        id: "book_l1_contactless",
+        title: "EMV Level 1 Contactless Interface Specification",
+        filename: "EMV-Level-1-Contactless-Interface-Specification-V4.0-260106.pdf",
+        pages: null,
+        description: "PCD（プロキシミティ結合デバイス・ターミナル）とPICC（非接触ICカード・デバイス）間のRF通信、アンテナ要件、初期通信プロトコルを規定するLevel 1非接触仕様。",
+        chapters: [
+          { number: "1", title: "Scope", page: 1, summary: "Level 1非接触インターフェース仕様（PCD/PICC）の目的と適用範囲を記述。", keywords: ["scope", "level 1", "PCD", "PICC"] },
+          { number: "2", title: "Normative References", page: 1, summary: "準拠規格（ISO/IEC 14443シリーズ等）の一覧。", keywords: ["ISO 14443", "reference"] },
+          { number: "3", title: "Definitions, Abbreviations and Symbols", page: 1, summary: "PCD、PICCなど非接触決済特有の用語、略語、記号を定義。", keywords: ["definitions", "abbreviations", "symbols"] },
+          { number: "4", title: "Radio Frequency Power and Signal Interface", page: 1, summary: "RF（無線周波数）の電力伝送、キャリア周波数、変調（Type A/Type B）、コーディング方式の要件について規定。", keywords: ["RF", "radio frequency", "modulation", "Type A", "Type B", "power", "coding"] },
+          { number: "5", title: "Initialization and Anticollision", page: 1, summary: "カード（PICC）がPCD電磁界に入った際の初期化フロー（ポーリング）、複数カード検知時の衝突防止（アンチコリジョン）手順。", keywords: ["initialization", "anticollision", "polling", "WUPA", "WUPB", "collision"] },
+          { number: "6", title: "Transmission Protocols", page: 1, summary: "ハーフデュプレックスブロック伝送プロトコルの詳細、フレームフォーマット、エラー検出とリカバリの手順。", keywords: ["transmission protocol", "frame", "error recovery"] },
+          { number: "7", title: "PCD Interoperability Requirements", page: 1, summary: "PCD（ターミナル）アンテナ設計、動作ボリューム（Operating Volume）など、相互運用性能（Interoperability）要件。", keywords: ["interoperability", "operating volume", "PCD antenna"] }
         ]
       }
     ]
